@@ -44,23 +44,30 @@ public class WebService : IWebService
         var nodes = htmlDoc.DocumentNode.SelectNodes("//*[@id=\"content\"]/div[3]//div").ToList();
         var games = new List<GameData>();
 
-        foreach(var node in nodes)
+        try
         {
-            var gameData = new GameData
+            foreach (var node in nodes)
             {
-                Winner = node.SelectSingleNode(".//tr[1]//a").InnerText,
-                Loser = node.SelectSingleNode(".//tr[2]//a").InnerText,
-                WinnerScore = node.SelectSingleNode(".//tr[1]//td[2]").InnerText,
-                LoserScore = node.SelectSingleNode(".//tr[2]//td[2]").InnerText,
-                WinnerRounds = node.SelectNodes("//table[2]/tbody/tr[1]/td[@class='center']").Select(node => node.InnerText).ToList(),
-                LoserRounds = node.SelectNodes("//table[2]/tbody/tr[2]/td[@class='center']").Select(node => node.InnerText).ToList()
+                var gameData = new GameData
+                {
+                    Winner = node.SelectSingleNode(".//tr[1]//a").InnerText,
+                    Loser = node.SelectSingleNode(".//tr[2]//a").InnerText,
+                    WinnerScore = node.SelectSingleNode(".//tr[1]//td[2]").InnerText,
+                    LoserScore = node.SelectSingleNode(".//tr[2]//td[2]").InnerText,
+                    WinnerRounds = node.SelectNodes("//table[2]/tbody/tr[1]/td[@class='center']").Select(node => node.InnerText).ToList(),
+                    LoserRounds = node.SelectNodes("//table[2]/tbody/tr[2]/td[@class='center']").Select(node => node.InnerText).ToList()
 
-            };
+                };
 
-            games.Add(gameData);
-            Console.WriteLine($"Added: {gameData.Winner} vs {gameData.Loser}");
+                games.Add(gameData);
+                Console.WriteLine($"Added: {gameData.Winner} vs {gameData.Loser}");
+            }
+
         }
-
+        catch
+        {
+            Console.WriteLine("Could not retrive game data");
+        }
         return games;
     }
 

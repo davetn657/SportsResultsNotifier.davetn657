@@ -33,16 +33,25 @@ public class EmailService : IEmailService
         _mail.Body = FormatDataToHtml(games);
         _mail.IsBodyHtml = true;
 
-        using(var smtp = new SmtpClient(_settings.SmtpAddress, _settings.Port))
+        try
         {
-            smtp.UseDefaultCredentials = false;
-            smtp.Credentials = new NetworkCredential(_settings.From, _settings.Password);
-            smtp.EnableSsl = false;
-            smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-            smtp.Send(_mail);
+            using (var smtp = new SmtpClient(_settings.SmtpAddress, _settings.Port))
+            {
+                smtp.UseDefaultCredentials = false;
+                smtp.Credentials = new NetworkCredential(_settings.From, _settings.Password);
+                smtp.EnableSsl = false;
+                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtp.Send(_mail);
+            }
+
+            return "Successfully sent email";
+        }
+        catch(Exception ex)
+        {
+            return string.Empty;
         }
 
-        return string.Empty;
+        
     }
 
     public string FormatDataToHtml(List<GameData> games)
