@@ -3,12 +3,14 @@ namespace SportsResultsNotifier.davetn657.Services;
 public class Worker : BackgroundService
 {
     private readonly IWebService _webService;
+    private readonly IEmailService _emailSerivce;
     private readonly ILogger _logger;
 
-    public Worker(ILogger<Worker> logger, IWebService webService)
+    public Worker(ILogger<Worker> logger, IWebService webService, IEmailService emailService)
     {
         _logger = logger;
         _webService = webService;
+        _emailSerivce = emailService;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -18,12 +20,15 @@ public class Worker : BackgroundService
             if (_logger.IsEnabled(LogLevel.Information))
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                _webService.GetTitle();
+                var subject = _webService.GetTitle();
                 var games = _webService.GetAllGameData();
+                var mail = _emailSerivce.SendEmail(subject, games);
             }
 
+            var today = DateTime.Now;
+            var timeDelay = new DateTime(today.Year, today.Month, today.Day + 1, 07, 00, 00);
 
-            await Task.Delay(60000, stoppingToken);
+            await Task.Delay(timeDelay - today, stoppingToken);
         }
     }
 }
