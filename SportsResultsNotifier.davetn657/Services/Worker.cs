@@ -22,7 +22,16 @@ public class Worker : BackgroundService
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
                 var subject = _webService.GetTitle();
                 var games = _webService.GetAllGameData();
-                var mail = _emailSerivce.SendEmail(subject, games);
+
+                if(subject == string.Empty || games.Count == 0)
+                {
+                    Console.WriteLine("Could not recieve basketball data!");
+                    Console.WriteLine("Web service may be down...");
+                }
+                else
+                {
+                    _emailSerivce.SendEmail(subject, games);
+                }
             }
 
             var today = DateTime.Now;
