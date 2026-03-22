@@ -46,7 +46,7 @@ public class EmailService : IEmailService
 
             return "Successfully sent email";
         }
-        catch(Exception ex)
+        catch
         {
             return string.Empty;
         }
